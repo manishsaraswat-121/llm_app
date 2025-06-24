@@ -1,13 +1,22 @@
-import streamlit as st
+import os
+os.environ["STREAMLIT_WATCH_USE_POLLING"] = "true"
+
+# 🔒 Patch torch.classes to avoid Streamlit watcher error
+import sys
+import types
 import torch
+if isinstance(torch.classes, types.ModuleType):
+    torch.classes.__path__ = []
+
+import streamlit as st
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-# Load model and tokenizer locally
-@st.cache_resource  # Cache model and tokenizer for faster reloads
+MODEL_DIR = r"models\tiny-gpt2-medquad"
+
+@st.cache_resource
 def load_model():
-    model_dir = r"C:\Users\manis\Downloads\medical-llm-project\models\tiny-gpt2-medquad"
-    tokenizer = AutoTokenizer.from_pretrained(model_dir)
-    model = AutoModelForCausalLM.from_pretrained(model_dir)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_DIR)
     model.eval()
     return tokenizer, model
 
