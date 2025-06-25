@@ -11,12 +11,16 @@ if isinstance(torch.classes, types.ModuleType):
 import streamlit as st
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-MODEL_DIR = r"models\tiny-gpt2-medquad"
+from pathlib import Path
+#MODEL_DIR = Path("models/tiny-gpt2-medquad").resolve().as_posix()
 
 @st.cache_resource
 def load_model():
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
-    model = AutoModelForCausalLM.from_pretrained(MODEL_DIR)
+    from pathlib import Path
+    model_dir = Path("models/tiny-gpt2-medquad").resolve().as_posix()
+
+    tokenizer = AutoTokenizer.from_pretrained(model_dir)
+    model = AutoModelForCausalLM.from_pretrained(model_dir)
     model.eval()
     return tokenizer, model
 
